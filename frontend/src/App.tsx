@@ -1,26 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+//// filepath: frontend/src/App.tsx
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
-function App() {
+const App: React.FC = () => {
+  const [message, setMessage] = useState<string>('Loading...');
+
+  useEffect(() => {
+    // Fetch the hello message from the Django API
+    axios.get('http://127.0.0.1:8000/api/hello/')
+      .then(res => {
+        setMessage(res.data.message);
+      })
+      .catch(err => {
+        console.error(err);
+        setMessage('Error fetching data.');
+      });
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ padding: '2rem' }}>
+      <h1>React Frontend</h1>
+      <p>{message}</p>
     </div>
   );
-}
+};
 
 export default App;
