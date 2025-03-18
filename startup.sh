@@ -7,6 +7,13 @@ docker run --rm -p 127.0.0.1:5000:3000 bkimminich/juice-shop &
 # Give Docker a couple of seconds to initialize
 sleep 2
 
+# Start OWASP ZAP in daemon mode on port 8080
+echo "Starting OWASP ZAP on port 8080..."
+docker run --rm -p 127.0.0.1:8080:8080 zaproxy/zap-stable zap.sh -daemon -port 8080 -config api.disablekey=true &
+
+# Give Docker a couple of seconds to initialize
+sleep 2
+
 # Activate the Python virtual environment and start the Django backend on port 8000
 echo "Starting Django backend on port 8000..."
 source backend/venv/bin/activate
