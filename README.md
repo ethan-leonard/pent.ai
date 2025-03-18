@@ -1,1 +1,1 @@
-# Pent.ai
+# pent.ai
