@@ -227,7 +227,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Contact
 
-Project Link: [https://github.com/yourusername/pent.ai](https://github.com/yourusername/pent.ai)
+Project Link: [https://github.com/yourusername/pent.ai](https://github.com/ethan-leonard/pent.ai)
 
 ---
 
