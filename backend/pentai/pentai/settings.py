@@ -38,12 +38,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-        # Third-party apps
+    # Third-party apps
     'rest_framework',  # Django REST Framework
     'corsheaders',     # CORS headers for API
     
     # Project apps
-    'api',             # Our API app
+    'api',             
+    'vulnerability_scanner', 
 ]
 
 MIDDLEWARE = [
