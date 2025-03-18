@@ -1,10 +1,6 @@
 # Pent.AI
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)  
-![Python](https://img.shields.io/badge/python-3.9+-green.svg)  
-![Django](https://img.shields.io/badge/django-4.2+-green.svg)  
-![React](https://img.shields.io/badge/react-18.0+-61DAFB.svg)  
-![TypeScript](https://img.shields.io/badge/typescript-4.9+-blue.svg)  
+![License](https://img.shields.io/badge/license-MIT-blue.svg) ![Python](https://img.shields.io/badge/python-3.9+-green.svg) ![Django](https://img.shields.io/badge/django-4.2+-green.svg) ![React](https://img.shields.io/badge/react-18.0+-61DAFB.svg) ![TypeScript](https://img.shields.io/badge/typescript-4.9+-blue.svg)
 
 ## Overview
 
