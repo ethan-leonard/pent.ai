@@ -203,7 +203,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 We follow a simple commit message format to make the project history readable. Each commit message should be structured as follows:
 
-<emoji> <type>: <subject>
+`<emoji> <type>: <subject>`
 
 ### Types and Emojis
 
@@ -213,6 +213,13 @@ We follow a simple commit message format to make the project history readable. E
 | 🐛 | `fix` | Bug fix |
 | 📝 | `docs` | Documentation changes |
 | 💄 | `style` | Code formatting, styling (no code change) |
+
+### Examples
+
+- ✨ feat: add SQL injection pattern detection
+- 🐛 fix: resolve false positive in XSS detection
+- 📝 docs: update installation instructions
+- 💄 style: format code according to style guide
 
 ## License
 
