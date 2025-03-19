@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# Define a cleanup function to stop containers on exit
+function cleanup {
+    echo "Cleaning up..."
+    echo "Stopping Juice Shop container..."
+    docker stop juice-shop 2>/dev/null || true
+    echo "Stopping OWASP ZAP container..."
+    docker stop zap 2>/dev/null || true
+}
+
+# Trap SIGINT and SIGTERM signals (e.g. Ctrl+C)
+trap cleanup SIGINT SIGTERM
+
 # Remove the existing Docker network if it exists
 echo "Removing existing Docker network (if any)..."
 docker network rm pentai-network 2>/dev/null || true
@@ -17,7 +29,7 @@ sleep 3
 
 # Start OWASP ZAP in daemon mode on port 8090 with proper API access configuration
 echo "Starting OWASP ZAP on port 8090..."
-docker run --rm --network pentai-network --name zap -p 8090:8090 -i ghcr.io/zaproxy/zaproxy zap.sh -daemon -port 8090 -host 0.0.0.0 -config api.disablekey=true -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true &
+docker run --rm --network pentai-network --name zap -p 8090:8090 -i ghcr.io/zaproxy/zaproxy zap-x.sh -daemon -port 8090 -host 0.0.0.0 -config api.disablekey=true -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true -addonuninstall domxss &
 
 # Wait longer for ZAP to fully initialize
 echo "Waiting for ZAP to initialize (15 seconds)..."
