@@ -1,217 +1,120 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
 import './App.css';
+import axios from 'axios';
 
-interface Vulnerability {
-  id: string;
-  name: string;
-  description: string;
-  url: string;
-  risk: string;
-  confidence: string;
-}
+function App() {
+  const [url, setUrl] = useState('http://juice-shop:3000');
+  const [isLoading, setIsLoading] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState<{
+    success: boolean;
+    message: string;
+    zap_version?: string;
+  } | null>(null);
 
-interface Scan {
-  id: string;
-  target_url: string;
-  start_time: string;
-  end_time: string | null;
-  status: 'pending' | 'in_progress' | 'completed' | 'failed';
-  vulnerabilities: Vulnerability[];
-}
-
-const App: React.FC = () => {
-  const [targetUrl, setTargetUrl] = useState<string>('http://127.0.0.1:5000');
-  const [currentScan, setCurrentScan] = useState<Scan | null>(null);
-  const [scans, setScans] = useState<Scan[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const API_BASE = 'http://127.0.0.1:8000/api';
-
-  // Load existing scans on component mount
-  useEffect(() => {
-    fetchScans();
-  }, []);
-
-  // Poll for updates if there's a scan in progress
-  useEffect(() => {
-    let interval: number | undefined;
-    
-    if (currentScan && (currentScan.status === 'pending' || currentScan.status === 'in_progress')) {
-      interval = window.setInterval(() => {
-        fetchScanDetails(currentScan.id);
-      }, 3000);
-    }
-
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, [currentScan]);
-
-  const fetchScans = async () => {
-    try {
-      const response = await axios.get(`${API_BASE}/scans/`);
-      setScans(response.data);
-    } catch (err) {
-      console.error('Error fetching scans:', err);
-      setError('Failed to fetch scan history');
-    }
-  };
-
-  const fetchScanDetails = async (scanId: string) => {
-    try {
-      const response = await axios.get(`${API_BASE}/scans/${scanId}/`);
-      setCurrentScan(response.data);
-      
-      // Update the scan in the list as well
-      setScans(prevScans => 
-        prevScans.map(scan => scan.id === scanId ? response.data : scan)
-      );
-    } catch (err) {
-      console.error('Error fetching scan details:', err);
-    }
-  };
-
-  const startScan = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const response = await axios.post(`${API_BASE}/scans/`, { target_url: targetUrl });
-      setCurrentScan(response.data);
-      setScans(prevScans => [response.data, ...prevScans]);
-    } catch (err: any) {
-      console.error('Error starting scan:', err);
-      setError(err.response?.data?.message || 'Failed to start scan');
-    } finally {
-      setLoading(false);
-    }
-  };
+    setIsLoading(true);
+    setConnectionStatus(null);
 
-  const getRiskClass = (risk: string) => {
-    switch (risk) {
-      case 'critical': return 'risk-critical';
-      case 'high': return 'risk-high';
-      case 'medium': return 'risk-medium';
-      case 'low': return 'risk-low';
-      default: return 'risk-info';
+    try {
+      const response = await axios.post('http://localhost:8000/api/zap-connection/', {
+        target_url: url
+      });
+      
+      setConnectionStatus({
+        success: response.data.success,
+        message: response.data.message,
+        zap_version: response.data.zap_version
+      });
+    } catch (error) {
+      console.error('Error connecting to ZAP:', error);
+      setConnectionStatus({
+        success: false,
+        message: 'Failed to connect to ZAP. Please check the configuration and try again.'
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="app-container">
-      <header>
-        <h1>Pent.AI - Web Security Scanner</h1>
+    <div className="App" style={{ 
+      maxWidth: '800px', 
+      margin: '0 auto', 
+      padding: '20px',
+      fontFamily: 'Arial, sans-serif'
+    }}>
+      <header style={{ marginBottom: '30px', textAlign: 'center' }}>
+        <h1>Pent.AI</h1>
+        <p>ZAP Connection Tester</p>
       </header>
       
-      <section className="scan-form">
-        <h2>Start New Scan</h2>
-        <form onSubmit={startScan}>
-          <div className="form-group">
-            <label htmlFor="targetUrl">Target URL:</label>
+      <section style={{ 
+        backgroundColor: '#f5f5f5', 
+        padding: '20px', 
+        borderRadius: '8px',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+      }}>
+        <h2>Test ZAP Connection</h2>
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: '15px' }}>
+            <label htmlFor="url" style={{ display: 'block', marginBottom: '5px' }}>
+              Target URL:
+            </label>
             <input
               type="url"
-              id="targetUrl"
-              value={targetUrl}
-              onChange={(e) => setTargetUrl(e.target.value)}
-              placeholder="Enter website URL to scan"
+              id="url"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              style={{ 
+                width: '100%', 
+                padding: '8px',
+                borderRadius: '4px',
+                border: '1px solid #ccc'
+              }}
               required
             />
+            <small style={{ color: '#666', display: 'block', marginTop: '5px' }}>
+              Default: http://juice-shop:3000 (OWASP Juice Shop in Docker)
+            </small>
           </div>
-          <button 
-            type="submit" 
-            disabled={loading || (currentScan?.status === 'in_progress')}
+          
+          <button
+            type="submit"
+            disabled={isLoading}
+            style={{ 
+              backgroundColor: '#4CAF50',
+              color: 'white',
+              padding: '10px 15px',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: isLoading ? 'not-allowed' : 'pointer'
+            }}
           >
-            {loading ? 'Starting...' : 'Start Scan'}
+            {isLoading ? 'Testing Connection...' : 'Test Connection'}
           </button>
         </form>
-        {error && <div className="error-message">{error}</div>}
       </section>
-
-      {currentScan && (
-        <section className="current-scan">
-          <h2>Current Scan</h2>
-          <div className="scan-details">
-            <p><strong>Target:</strong> {currentScan.target_url}</p>
+      
+      {connectionStatus && (
+        <div style={{
+          marginTop: '20px',
+          padding: '15px',
+          borderRadius: '4px',
+          backgroundColor: connectionStatus.success ? '#dff0d8' : '#f2dede',
+          color: connectionStatus.success ? '#3c763d' : '#a94442'
+        }}>
+          <h3>{connectionStatus.success ? 'Success!' : 'Error'}</h3>
+          <p>{connectionStatus.message}</p>
+          {connectionStatus.zap_version && (
             <p>
-              <strong>Status:</strong> 
-              <span className={`status-${currentScan.status}`}>
-                {currentScan.status.replace('_', ' ')}
-              </span>
+              ZAP Version: <code>{connectionStatus.zap_version}</code>
             </p>
-            <p><strong>Started:</strong> {new Date(currentScan.start_time).toLocaleString()}</p>
-            {currentScan.end_time && (
-              <p><strong>Completed:</strong> {new Date(currentScan.end_time).toLocaleString()}</p>
-            )}
-          </div>
-
-          {currentScan.vulnerabilities.length > 0 && (
-            <div className="vulnerabilities">
-              <h3>Found Vulnerabilities ({currentScan.vulnerabilities.length})</h3>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Risk</th>
-                    <th>Confidence</th>
-                    <th>URL</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentScan.vulnerabilities.map(vuln => (
-                    <tr key={vuln.id}>
-                      <td>{vuln.name}</td>
-                      <td className={getRiskClass(vuln.risk)}>{vuln.risk}</td>
-                      <td>{vuln.confidence}</td>
-                      <td className="url-cell">
-                        <a href={vuln.url} target="_blank" rel="noopener noreferrer">
-                          {new URL(vuln.url).pathname}
-                        </a>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
           )}
-        </section>
-      )}
-
-      {scans.length > 0 && !currentScan && (
-        <section className="scan-history">
-          <h2>Scan History</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Target</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Vulnerabilities</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {scans.map(scan => (
-                <tr key={scan.id}>
-                  <td>{scan.target_url}</td>
-                  <td>{new Date(scan.start_time).toLocaleString()}</td>
-                  <td className={`status-${scan.status}`}>{scan.status}</td>
-                  <td>{scan.vulnerabilities.length}</td>
-                  <td>
-                    <button onClick={() => setCurrentScan(scan)}>View Details</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </section>
+        </div>
       )}
     </div>
   );
-};
+}
 
 export default App;
