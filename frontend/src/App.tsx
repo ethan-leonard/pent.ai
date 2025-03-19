@@ -7,6 +7,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [progressMessage, setProgressMessage] = useState<string | null>(null);
   const [resultData, setResultData] = useState<any>(null);
+  const [scanType, setScanType] = useState<'combined' | 'traditional' | 'ajax' | 'active'>('combined');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,26 +18,65 @@ function App() {
     try {
       // 1. Test connection
       const connResponse = await axios.post('http://localhost:8000/api/zap-connection/', { target_url: url });
-      if (connResponse.data.success) {
-        setProgressMessage("ZAP connection successful. Starting spider scan...");
-        // 2. Run spider scan
-        const spiderResponse = await axios.post('http://localhost:8000/api/spider-scan/', { target_url: url });
-        if (!spiderResponse.data.success) {
-          setProgressMessage("Spider scan failed.");
+      if (!connResponse.data.success) {
+        setProgressMessage("ZAP connection test failed.");
+        setIsLoading(false);
+        return;
+      }
+      
+      setProgressMessage("ZAP connection successful.");
+      
+      // Decide which scan to run based on scanType
+      if (scanType === 'traditional') {
+        // Run only traditional spider scan
+        setProgressMessage("Starting traditional spider scan...");
+        const spiderResponse = await axios.post('http://localhost:8000/api/traditional-spider-scan/', { target_url: url });
+        setResultData(spiderResponse.data);
+        setProgressMessage("Traditional spider scan completed.");
+      } 
+      else if (scanType === 'ajax') {
+        // Run only Ajax spider scan
+        setProgressMessage("Starting Ajax spider scan...");
+        const ajaxResponse = await axios.post('http://localhost:8000/api/ajax-spider-scan/', { target_url: url });
+        setResultData(ajaxResponse.data);
+        setProgressMessage("Ajax spider scan completed.");
+      }
+      else if (scanType === 'active') {
+        // Run only active scan (without spider)
+        setProgressMessage("Starting active scan...");
+        const activeResponse = await axios.post('http://localhost:8000/api/active-scan/', { target_url: url });
+        setResultData(activeResponse.data);
+        setProgressMessage("Active scan completed.");
+      }
+      else {
+        // Combined scan (traditional + ajax + active) - original flow
+        setProgressMessage("Starting traditional spider scan...");
+        const traditionalResponse = await axios.post('http://localhost:8000/api/traditional-spider-scan/', { target_url: url });
+        if (!traditionalResponse.data.success) {
+          setProgressMessage("Traditional spider scan failed.");
+          setResultData(traditionalResponse.data);
           setIsLoading(false);
           return;
         }
-        setProgressMessage("Spider scan completed. Starting active scan...");
-        // 3. Run active scan
+        
+        setProgressMessage("Traditional spider scan completed. Starting Ajax spider scan...");
+        const ajaxResponse = await axios.post('http://localhost:8000/api/ajax-spider-scan/', { target_url: url });
+        if (!ajaxResponse.data.success) {
+          setProgressMessage("Ajax spider scan failed.");
+          setResultData(ajaxResponse.data);
+          setIsLoading(false);
+          return;
+        }
+        
+        setProgressMessage("Ajax spider scan completed. Starting active scan...");
         const activeResponse = await axios.post('http://localhost:8000/api/active-scan/', { target_url: url });
         setResultData(activeResponse.data);
         setProgressMessage("Active scan complete.");
-      } else {
-        setProgressMessage("ZAP connection test failed.");
       }
     } catch (error: any) {
       console.error('Error:', error);
-      setProgressMessage("An error occurred. Check console for details.");
+      setProgressMessage(`An error occurred: ${error.message}`);
+      setResultData({ success: false, error: error.message });
     } finally {
       setIsLoading(false);
     }
@@ -84,6 +124,50 @@ function App() {
             </small>
           </div>
           
+          <div style={{ marginBottom: '15px' }}>
+            <label style={{ display: 'block', marginBottom: '5px' }}>
+              Scan Type:
+            </label>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+              <label style={{ marginRight: '15px' }}>
+                <input
+                  type="radio"
+                  name="scanType"
+                  checked={scanType === 'combined'}
+                  onChange={() => setScanType('combined')}
+                /> 
+                Full Scan (Spider + Active)
+              </label>
+              <label style={{ marginRight: '15px' }}>
+                <input
+                  type="radio"
+                  name="scanType"
+                  checked={scanType === 'traditional'}
+                  onChange={() => setScanType('traditional')}
+                /> 
+                Traditional Spider Only
+              </label>
+              <label style={{ marginRight: '15px' }}>
+                <input
+                  type="radio"
+                  name="scanType"
+                  checked={scanType === 'ajax'}
+                  onChange={() => setScanType('ajax')}
+                /> 
+                Ajax Spider Only
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="scanType"
+                  checked={scanType === 'active'}
+                  onChange={() => setScanType('active')}
+                /> 
+                Active Scan Only
+              </label>
+            </div>
+          </div>
+          
           <button
             type="submit"
             disabled={isLoading}
@@ -115,12 +199,11 @@ function App() {
             color: resultData.success ? '#3c763d' : '#a94442'
           }}>
             <h3>{resultData.success ? 'Scan Completed' : 'Scan Failed'}</h3>
-            <pre style={{ overflowX: 'auto' }}>
+            <pre style={{ overflowX: 'auto', maxHeight: '400px' }}>
               {JSON.stringify(resultData, null, 2)}
             </pre>
           </div>
         )}
-
       </section>
     </div>
   );
