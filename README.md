@@ -132,39 +132,6 @@ docker run -p 2375:2375 -i owasp/zap2docker-stable zap.sh -daemon -port 2375 -ho
 5. Once complete, explore the identified vulnerabilities, risk register, and screenshots  
 6. Review AI-generated mitigation strategies for each vulnerability  
 
-## Roadmap
-
-### Phase 1: Foundation (Current)
-- [x] Project structure setup  
-- [x] Basic Django and React configuration  
-- [ ] Database schema design  
-- [ ] OWASP ZAP API integration  
-
-### Phase 2: Core Functionality
-- [ ] Implement vulnerability scanning  
-- [ ] Develop basic frontend components  
-- [ ] Create REST API endpoints  
-- [ ] Implement vulnerability data storage  
-
-### Phase 3: Advanced Features
-- [ ] Integrate proxy.lite for validation  
-- [ ] Implement screenshot capture  
-- [ ] Develop risk register generation  
-- [ ] Integrate AI for mitigation strategies  
-
-### Phase 4: Refinement and Deployment
-- [ ] Comprehensive testing  
-- [ ] UI/UX improvements  
-- [ ] Performance optimization  
-- [ ] Documentation  
-- [ ] CI/CD pipeline setup  
-
-### Future Enhancements
-- [ ] Support for additional vulnerability types  
-- [ ] User authentication and role-based access  
-- [ ] Scan history and comparison  
-- [ ] Integration with CI/CD pipelines  
-- [ ] Customizable scanning rules  
 
 ## Technologies Used
 

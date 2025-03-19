@@ -29,7 +29,7 @@ class ZAPActiveScanView(APIView):
         
         target_url = serializer.validated_data['target_url']
         zap_service = ZAPService()
-        result = zap_service.active_scan_sql_injection(target_url)
+        result = zap_service.active_scan_all(target_url)
         return Response(result, status=status.HTTP_200_OK if result['success'] else status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 class HelloWorldView(APIView):

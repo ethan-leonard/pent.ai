@@ -17,8 +17,7 @@ sleep 3
 
 # Start OWASP ZAP in daemon mode on port 8090 with proper API access configuration
 echo "Starting OWASP ZAP on port 8090..."
-docker run --rm --network pentai-network --name zap -p 8090:8090 -i zaproxy/zap-stable zap.sh -daemon -port 8090 -host 0.0.0.0 -config api.disablekey=true -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true &
-
+docker run --rm --network pentai-network --name zap -p 8090:8090 -i ghcr.io/zaproxy/zaproxy zap.sh -daemon -port 8090 -host 0.0.0.0 -config api.disablekey=true -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true &
 
 # Wait longer for ZAP to fully initialize
 echo "Waiting for ZAP to initialize (15 seconds)..."
