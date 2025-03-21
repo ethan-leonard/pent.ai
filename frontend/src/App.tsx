@@ -2,6 +2,15 @@ import React, { useState } from 'react';
 import './App.css';
 import axios from 'axios';
 
+interface Vulnerability {
+  name: string;
+  description: string;
+  url: string;
+  risk: string;
+  param?: string;
+  attack?: string;
+}
+
 function App() {
   const [url, setUrl] = useState('http://juice-shop:3000');
   const [isLoading, setIsLoading] = useState(false);
@@ -82,9 +91,68 @@ function App() {
     }
   };
 
+  // Function to handle the simulate button click (placeholder for now)
+  const handleSimulate = (vulnerability: any) => {
+    console.log("Simulate clicked for vulnerability:", vulnerability);
+    // Will implement actual functionality later
+  };
+
+  // Function to extract just the first two sentences from text
+  const getFirstTwoSentences = (text: string | undefined): string => {
+    if (!text) return '-';
+    
+    // Match sentences that end with period, question mark, or exclamation point
+    // followed by a space or end of string
+    const sentenceRegex = /[^.!?]*[.!?](?:\s|$)/g;
+    const sentences = text.match(sentenceRegex);
+    
+    if (!sentences || sentences.length === 0) {
+      // If no proper sentences found, just return a portion of the text
+      return text.length > 100 ? text.substring(0, 100) + '...' : text;
+    }
+    
+    // Return first two sentences or just the first if only one exists
+    return (sentences.length === 1) 
+      ? sentences[0].trim() 
+      : (sentences[0] + sentences[1]).trim();
+  };
+
+  // Function to render risk with appropriate color
+  const renderRiskBadge = (risk: string) => {
+    let color = '#777'; // Default gray for unknown
+    
+    switch(risk.toLowerCase()) {
+      case 'high':
+        color = '#d9534f'; // Red
+        break;
+      case 'medium':
+        color = '#f0ad4e'; // Orange/yellow
+        break;
+      case 'low':
+        color = '#5bc0de'; // Blue
+        break;
+      case 'informational':
+        color = '#5cb85c'; // Green
+        break;
+    }
+    
+    return (
+      <span style={{ 
+        backgroundColor: color, 
+        color: 'white', 
+        padding: '2px 8px', 
+        borderRadius: '4px',
+        fontSize: '0.85em',
+        fontWeight: 'bold'
+      }}>
+        {risk}
+      </span>
+    );
+  };
+
   return (
     <div className="App" style={{
-      maxWidth: '800px',
+      maxWidth: '90%',
       margin: '0 auto',
       padding: '20px',
       fontFamily: 'Arial, sans-serif'
@@ -190,7 +258,77 @@ function App() {
           </div>
         )}
 
-        {resultData && (
+        {resultData && resultData.success && resultData.alerts && (
+          <div style={{
+            marginTop: '20px',
+            padding: '15px',
+            borderRadius: '4px',
+            backgroundColor: '#fff',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+          }}>
+            <h3>Vulnerability Findings</h3>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ 
+                width: '100%', 
+                borderCollapse: 'collapse',
+                marginTop: '10px',
+                fontSize: '14px'
+              }}>
+                <thead>
+                  <tr style={{ backgroundColor: '#f2f2f2' }}>
+                    <th style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Name</th>
+                    <th style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Risk</th>
+                    <th style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Description</th>
+                    <th style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>URL</th>
+                    <th style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Solution</th>
+                    <th style={{ padding: '10px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {resultData.alerts.map((vuln: any, index: number) => (
+                    <tr key={index} style={{ borderBottom: '1px solid #eee' }}>
+                      <td style={{ padding: '10px' }}>{vuln.name || vuln.alert}</td>
+                      <td style={{ padding: '10px' }}>{renderRiskBadge(vuln.risk)}</td>
+                      <td style={{ padding: '10px' }}>
+                        {getFirstTwoSentences(vuln.description)}
+                      </td>
+                      <td style={{ 
+                        padding: '10px', 
+                        maxWidth: '300px', 
+                        overflow: 'hidden', 
+                        textOverflow: 'ellipsis', 
+                        whiteSpace: 'nowrap' 
+                      }}>
+                        <a href={vuln.url} target="_blank" rel="noopener noreferrer">{vuln.url}</a>
+                      </td>
+                      <td style={{ padding: '10px' }}>
+                        {getFirstTwoSentences(vuln.solution)}
+                      </td>
+                      <td style={{ padding: '10px' }}>
+                        <button 
+                          onClick={() => handleSimulate(vuln)}
+                          style={{
+                            backgroundColor: '#337ab7',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px',
+                            padding: '5px 10px',
+                            cursor: 'pointer',
+                            fontSize: '12px'
+                          }}
+                        >
+                          Simulate
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {resultData && !resultData.alerts && (
           <div style={{
             marginTop: '20px',
             padding: '15px',
