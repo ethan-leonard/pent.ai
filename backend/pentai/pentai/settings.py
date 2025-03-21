@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     # Project apps
     'api',             
     'vulnerability_scanner', 
+    'simulate',
 ]
 
 MIDDLEWARE = [
