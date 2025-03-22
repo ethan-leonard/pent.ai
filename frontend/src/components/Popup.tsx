@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 interface PopupProps {
   isOpen: boolean;
@@ -10,6 +10,8 @@ interface PopupProps {
 
 const Popup: React.FC<PopupProps> = ({ isOpen, onClose, title, id, children }) => {
   const [isAnimating, setIsAnimating] = useState(false);
+  const chatVideoRef = useRef<HTMLVideoElement>(null);
+  const flowVideoRef = useRef<HTMLVideoElement>(null);
   
   // Handle ESC key press
   useEffect(() => {
@@ -23,16 +25,38 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onClose, title, id, children }) =
     return () => window.removeEventListener('keydown', handleEscKey);
   }, [isOpen, onClose]);
   
-  // Animation effect
+  // Animation effect and video autoplay
   useEffect(() => {
     if (isOpen) {
       setIsAnimating(true);
       document.body.style.overflow = 'hidden';
+      
+      // Auto play the videos when popup opens
+      if (chatVideoRef.current) {
+        chatVideoRef.current.play().catch(error => {
+          console.error("Error playing chat video:", error);
+        });
+      }
+      
+      if (flowVideoRef.current) {
+        flowVideoRef.current.play().catch(error => {
+          console.error("Error playing flow video:", error);
+        });
+      }
     } else {
       setTimeout(() => {
         setIsAnimating(false);
       }, 300);
       document.body.style.overflow = 'auto';
+      
+      // Pause videos when popup closes
+      if (chatVideoRef.current) {
+        chatVideoRef.current.pause();
+      }
+      
+      if (flowVideoRef.current) {
+        flowVideoRef.current.pause();
+      }
     }
   }, [isOpen]);
   
@@ -42,16 +66,19 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onClose, title, id, children }) =
     <div 
       style={{
         position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
         backgroundColor: '#fff',
         display: 'flex',
         flexDirection: 'column',
         zIndex: 1000,
         opacity: isOpen ? 1 : 0,
         transition: 'opacity 300ms',
+        width: '90%',
+        height: '90%',
+        boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
+        overflow: 'hidden' // Prevent content from overflowing
       }}
     >
       {/* Header with risk title and ID */}
@@ -81,67 +108,92 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onClose, title, id, children }) =
         </button>
       </div>
       
-      {/* Video container */}
+      {/* Main content area */}
       <div style={{
         display: 'flex',
-        flexDirection: 'row',
-        flexWrap: 'wrap',
         height: 'calc(100% - 60px)',
         padding: '20px',
+        overflow: 'hidden', // Prevent overflow
+        boxSizing: 'border-box'
       }}>
-        {/* Lower left - chat.mp3 */}
+        {/* Left side - Chat Recording (70% height but aligned at bottom) */}
         <div style={{
           width: '50%',
           height: '100%',
-          padding: '10px',
-          boxSizing: 'border-box',
+          paddingRight: '10px',
           display: 'flex',
-          flexDirection: 'column',
+          flexDirection: 'column'
         }}>
-          <h3 style={{ margin: '0 0 10px 0' }}>Chat Recording</h3>
+          <h3 style={{ margin: '0 0 10px 0' }}>Convergence: Proxy-Lite</h3>
+          
+          {/* Empty space to push content down (30% of height) */}
+          <div style={{ flex: '0.3' }}></div>
+          
+          {/* Actual video container (70% of height) */}
           <div style={{ 
-            flex: 1,
-            backgroundColor: '#f5f5f5', 
-            borderRadius: '8px',
+            flex: '0.7',
+            backgroundColor: '#ffffff', 
+            overflow: 'hidden',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'center'
           }}>
-            <audio
-              controls
-              style={{ width: '100%', maxWidth: '400px' }}
+            <video
+              ref={chatVideoRef}
+              autoPlay
+              muted
+              loop={false}
+              playsInline
+              disablePictureInPicture
+              style={{ 
+                maxWidth: '100%',
+                maxHeight: '100%', 
+                objectFit: 'contain'
+              }}
+              preload="auto"
+              // Remove controls attribute to hide player controls
             >
-              <source src="/videos/chat.mp3" type="audio/mpeg" />
-              Your browser does not support the audio element.
-            </audio>
+              <source src="/videos/Chat.mp4" type="video/mp4" />
+              Your browser does not support the video element.
+            </video>
           </div>
         </div>
         
-        {/* Right - flow.mp3 */}
+        {/* Right side - Flow Recording (full height) */}
         <div style={{
           width: '50%',
           height: '100%',
-          padding: '10px',
-          boxSizing: 'border-box',
+          paddingLeft: '10px',
           display: 'flex',
-          flexDirection: 'column',
+          flexDirection: 'column'
         }}>
-          <h3 style={{ margin: '0 0 10px 0' }}>Flow Recording</h3>
+          <h3 style={{ margin: '0 0 10px 0' }}>Live</h3>
           <div style={{ 
             flex: 1,
-            backgroundColor: '#f5f5f5', 
-            borderRadius: '8px',
+            backgroundColor: '#ffffff', 
+            overflow: 'hidden',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'center'
           }}>
-            <audio
-              controls
-              style={{ width: '100%', maxWidth: '400px' }}
+            <video
+              ref={flowVideoRef}
+              autoPlay
+              muted
+              loop={false}
+              playsInline
+              disablePictureInPicture
+              style={{ 
+                maxWidth: '100%',
+                maxHeight: '100%',
+                objectFit: 'contain'
+              }}
+              preload="auto"
+              // Remove controls attribute to hide player controls
             >
-              <source src="/videos/flow.mp3" type="audio/mpeg" />
-              Your browser does not support the audio element.
-            </audio>
+              <source src="/videos/Flow.mp4" type="video/mp4" />
+              Your browser does not support the video element.
+            </video>
           </div>
         </div>
       </div>
