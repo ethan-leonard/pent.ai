@@ -7,6 +7,8 @@ function cleanup {
     docker stop juice-shop 2>/dev/null || true
     echo "Stopping OWASP ZAP container..."
     docker stop zap 2>/dev/null || true
+    echo "Stopping Proxy-Lite container..."
+    docker stop proxy-lite 2>/dev/null || true
 }
 
 # Trap SIGINT and SIGTERM signals (e.g. Ctrl+C)
@@ -34,6 +36,14 @@ docker run --rm --network pentai-network --name zap -p 8090:8090 -i ghcr.io/zapr
 # Wait longer for ZAP to fully initialize
 echo "Waiting for ZAP to initialize (15 seconds)..."
 sleep 15
+
+# Start Proxy-Lite container on port 8008
+# echo "Starting Proxy-Lite on port 8008..."
+# docker run --rm --network pentai-network --name proxy-lite -p 8008:8008 proxy-lite &
+
+# Wait for Proxy-Lite to fully initialize
+# echo "Waiting for Proxy-Lite to initialize (15 seconds)..."
+# sleep 15
 
 # Activate the Python virtual environment and start the Django backend on port 8000
 echo "Starting Django backend on port 8000..."
