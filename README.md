@@ -1,37 +1,37 @@
 # Pent.AI
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg) ![Python](https://img.shields.io/badge/python-3.9+-green.svg) ![Django](https://img.shields.io/badge/django-4.2+-green.svg) ![React](https://img.shields.io/badge/react-18.0+-61DAFB.svg) ![TypeScript](https://img.shields.io/badge/typescript-4.9+-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-blue.svg) ![Python](https://img.shields.io/badge/python-3.9+-green.svg) ![Django](https://img.shields.io/badge/django-5.1+-green.svg) ![React](https://img.shields.io/badge/react-19.0+-61DAFB.svg) ![TypeScript](https://img.shields.io/badge/typescript-4.9+-blue.svg)
 
 ## Overview
 
-Pent.AI is an advanced web application security platform that automatically identifies, validates, and documents SQL injection vulnerabilities. By combining the power of OWASP ZAP's scanning capabilities with proxy.lite validation and AI-driven risk assessment, Pent.AI provides comprehensive security insights for web applications.
+Pent.AI is an advanced web application security platform that automatically identifies, validates, and documents web vulnerabilities. By combining the power of OWASP ZAP's scanning capabilities with proxy-lite validation and AI-driven risk assessment, Pent.AI provides comprehensive security insights for web applications.
 
 ### Key Features
 
-- **Automated SQL Injection Detection**: Leverages OWASP ZAP API for thorough scanning and fuzzing  
-- **Validation Engine**: Uses proxy.lite to confirm vulnerabilities and eliminate false positives  
+- **Automated Vulnerability Detection**: Leverages OWASP ZAP API for thorough scanning and fuzzing  
+- **Validation Engine**: Uses proxy-lite to confirm vulnerabilities and eliminate false positives  
 - **AI-Powered Risk Assessment**: Generates detailed risk registers with actionable mitigation strategies  
-- **Visual Evidence**: Captures and displays screenshots of identified vulnerabilities  
-- **User-Friendly Interface**: Clean React TypeScript frontend for easy interaction  
+- **Visual Simulation**: Interactive vulnerability simulations for better understanding  
+- **User-Friendly Interface**: Clean React TypeScript frontend with elegant animations  
 
 ## Architecture
 
-Pent.AI follows a modern client-server architecture with these key components:
+Pent.AI follows a modern microservices architecture with these key components:
 
 ### Backend (Django)
 
-- RESTful API endpoints for frontend communication  
-- Integration with OWASP ZAP for vulnerability scanning  
-- PostgreSQL database for vulnerability data persistence  
-- Proxy.lite integration for vulnerability validation  
-- AI integration for risk assessment and mitigation recommendations  
+- RESTful API endpoints using Django REST Framework
+- Integration with OWASP ZAP for vulnerability scanning
+- Multiple scanning APIs (traditional, AJAX, active)
+- SQLite database for vulnerability persistence 
+- Docker containerization for easy deployment
 
 ### Frontend (React TypeScript)
 
-- Intuitive interface for initiating scans  
-- Comprehensive dashboard for viewing vulnerability data  
-- Risk register with detailed findings and recommendations  
-- Visual evidence display with vulnerability screenshots  
+- Modern React 19 with TypeScript for type safety
+- Elegant UI with custom animations and transitions
+- Responsive design for all device sizes
+- Interactive vulnerability analysis tools
 
 ## Project Structure
 
@@ -39,36 +39,27 @@ Pent.AI follows a modern client-server architecture with these key components:
 pent.ai/
 ├── backend/               # Django backend
 │   ├── pentai/            # Main Django project
-│   │   ├── settings.py    # Project settings
-│   │   ├── urls.py        # URL routing
-│   │   └── wsgi.py        # WSGI configuration
-│   ├── vulnerability_scanner/ # App for ZAP integration
-│   │   ├── models.py      # Data models for vulnerabilities
-│   │   ├── services/      # Services for ZAP integration
-│   │   └── tasks.py       # Background tasks for scanning
-│   ├── api/               # REST API implementation
-│   │   ├── views.py       # API endpoints
-│   │   ├── serializers.py # Data serialization
-│   │   └── urls.py        # API routing
-│   ├── validation/        # Proxy.lite integration
-│   ├── risk_assessment/   # AI-powered risk assessment
-│   ├── manage.py          # Django management script
+│   │   ├── api/           # REST API implementation
+│   │   ├── vulnerability_scanner/ # ZAP integration
+│   │   ├── simulate/      # Simulation capabilities
+│   │   ├── validation/    # Validation utilities
+│   │   ├── pentai/        # Django settings & config
+│   │   └── proxy-lite-docker/ # Dockerfile for proxy-lite
 │   └── requirements.txt   # Python dependencies
 │
-├── frontend/              # React TypeScript frontend
+├── frontend/              # React frontend
 │   ├── public/            # Static assets
+│   │   └── videos/        # Simulation videos
 │   ├── src/
-│   │   ├── components/    # Reusable UI components
-│   │   ├── pages/         # Application pages
-│   │   ├── services/      # API communication services
-│   │   ├── types/         # TypeScript type definitions
-│   │   ├── utils/         # Utility functions
-│   │   ├── App.tsx        # Main application component
+│   │   ├── components/    # UI components
+│   │   │   ├── Popup.tsx  # Simulation popup
+│   │   │   └── DetailsPopup.tsx # Vulnerability details
+│   │   ├── App.tsx        # Main application
 │   │   └── index.tsx      # Entry point
-│   ├── package.json       # Node.js dependencies
-│   └── tsconfig.json      # TypeScript configuration
+│   └── package.json       # Node.js dependencies
 │
-├── docs/                  # Documentation
+├── startup.sh             # One-command startup script
+├── LICENSE                # MIT License file
 └── README.md              # This file
 ```
 
@@ -78,32 +69,51 @@ pent.ai/
 
 - Python 3.9+  
 - Node.js 16+  
-- PostgreSQL  
-- OWASP ZAP (can be run as Docker container)  
+- Docker & Docker Compose
+- OWASP ZAP (included in Docker setup)
 
-### Backend Setup
+### One-Command Setup
+
+The easiest way to run Pent.AI is using the included startup script:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/pent.ai.git
+git clone https://github.com/ethan-leonard/pent.ai.git
 cd pent.ai
 
+# Make the startup script executable
+chmod +x startup.sh
+
+# Run the startup script
+./startup.sh
+```
+
+This will:
+1. Create a Docker network for the containers
+2. Start the OWASP Juice Shop as a vulnerable test application
+3. Start OWASP ZAP in daemon mode
+4. Start the Django backend
+5. Start the React frontend
+
+### Manual Backend Setup
+
+```bash
 # Create and activate virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+python -m venv backend/venv
+source backend/venv/bin/activate
 
 # Install dependencies
 pip install -r backend/requirements.txt
 
 # Set up database
-cd backend
+cd backend/pentai
 python manage.py migrate
 
 # Run development server
-python manage.py runserver
+python manage.py runserver 0.0.0.0:8000
 ```
 
-### Frontend Setup
+### Manual Frontend Setup
 
 ```bash
 # Navigate to frontend directory
@@ -116,45 +126,43 @@ npm install
 npm start
 ```
 
-### OWASP ZAP Setup
-
-```bash
-# Run ZAP in daemon mode with Docker
-docker run -p 2375:2375 -i owasp/zap2docker-stable zap.sh -daemon -port 2375 -host 0.0.0.0 -config api.disablekey=true
-```
-
 ## Usage
 
 1. Navigate to `http://localhost:3000` in your browser  
-2. Enter the target URL (initially fixed to OWASP Juice Shop for testing)  
-3. Initiate the scan by clicking "Start Scan"  
-4. View the scan progress in real-time  
-5. Once complete, explore the identified vulnerabilities, risk register, and screenshots  
-6. Review AI-generated mitigation strategies for each vulnerability  
-
+2. Enter the target URL (default is the Juice Shop running at http://juice-shop:3000)  
+3. Select a scan mode:
+   - Complete Scan: Runs all scan types
+   - Traditional Crawler: Simple URL discovery
+   - AJAX Crawler: Discovers JavaScript-based pages
+   - Active Analysis: Tests for vulnerabilities
+4. Initiate the scan by clicking "Initiate Scan"  
+5. View the scan progress in real-time  
+6. Once complete, explore the identified vulnerabilities in the Threat Intelligence section
+7. For each vulnerability, you can:
+   - View technical Details
+   - Run an AI-powered Analysis with visual simulation
 
 ## Technologies Used
 
 ### Backend
-- Django (Web framework)  
+- Django 5.1+ (Web framework)  
 - Django REST Framework (API)  
-- PostgreSQL (Database)  
+- SQLite (Database)  
 - OWASP ZAP API (Security scanning)  
-- Proxy.lite (Validation)  
+- proxy-lite (AI validation)
 - Python-OWASPZAPv2 (ZAP API client)  
+- Docker (Containerization)
 
 ### Frontend
-- React (UI library)  
-- TypeScript (Type-safe JavaScript)  
-- Material-UI (Component library)  
+- React 19.0+ (UI library)  
+- TypeScript 4.9+ (Type-safe JavaScript)  
 - Axios (HTTP client)  
-- React Router (Navigation)  
-- React Query (Data fetching)  
+- CSS-in-JS (Custom styling)
 
-### AI and Data Processing
-- OpenAI API (Risk assessment)  
-- Pandas (Data manipulation)  
-- Celery (Background tasks)  
+### Infrastructure
+- Docker (Containerization)
+- OWASP Juice Shop (Test target)
+- OWASP ZAP (Scanner)
 
 ## Contributing
 
@@ -162,7 +170,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 1. Fork the repository  
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)  
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)  
+3. Commit your changes (`git commit -m '✨ feat: Add some amazing feature'`)  
 4. Push to the branch (`git push origin feature/amazing-feature`)  
 5. Open a Pull Request  
 
@@ -190,11 +198,11 @@ We follow a simple commit message format to make the project history readable. E
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Contact
 
-Project Link: [https://github.com/yourusername/pent.ai](https://github.com/ethan-leonard/pent.ai)
+Project Link: [https://github.com/ethan-leonard/pent.ai](https://github.com/ethan-leonard/pent.ai)
 
 ---
 
