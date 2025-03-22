@@ -4,6 +4,7 @@ import axios from 'axios';
 
 // Import the Popup component
 import Popup from './components/Popup';
+import DetailsPopup from './components/DetailsPopup';
 
 // Define color constants for consistent theming
 const COLORS = {
@@ -81,6 +82,7 @@ function App() {
   
   // Add state for the popup
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isDetailsPopupOpen, setIsDetailsPopupOpen] = useState(false);
   const [selectedVulnerability, setSelectedVulnerability] = useState<Vulnerability | null>(null);
   
   // For animations
@@ -101,6 +103,11 @@ function App() {
       document.head.removeChild(styleElement);
     };
   }, []);
+
+  const handleViewDetails = (vulnerability: Vulnerability) => {
+    setSelectedVulnerability(vulnerability);
+    setIsDetailsPopupOpen(true);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -766,23 +773,46 @@ function App() {
                           padding: '15px',
                           textAlign: 'center'
                         }}>
-                          <button 
-                            onClick={() => handleSimulate(vuln)}
-                            style={{
-                              backgroundColor: 'transparent',
-                              color: COLORS.secondary,
-                              border: `1px solid ${COLORS.secondary}`,
-                              borderRadius: '4px',
-                              padding: '8px 12px',
-                              cursor: 'pointer',
-                              fontSize: '13px',
-                              fontWeight: 500,
-                              transition: 'all 0.2s ease',
-                            }}
-                            className="analyze-button"
-                          >
-                            Analyze &rarr;
-                          </button>
+                          <div style={{ 
+                            display: 'flex', 
+                            gap: '8px',
+                            justifyContent: 'center'
+                          }}>
+                            <button 
+                              onClick={() => handleViewDetails(vuln)}
+                              style={{
+                                backgroundColor: 'transparent',
+                                color: COLORS.primary,
+                                border: `1px solid ${COLORS.primary}`,
+                                borderRadius: '4px',
+                                padding: '8px 12px',
+                                cursor: 'pointer',
+                                fontSize: '13px',
+                                fontWeight: 500,
+                                transition: 'all 0.2s ease',
+                              }}
+                              className="details-button"
+                            >
+                              Details
+                            </button>
+                            <button 
+                              onClick={() => handleSimulate(vuln)}
+                              style={{
+                                backgroundColor: 'transparent',
+                                color: COLORS.secondary,
+                                border: `1px solid ${COLORS.secondary}`,
+                                borderRadius: '4px',
+                                padding: '8px 12px',
+                                cursor: 'pointer',
+                                fontSize: '13px',
+                                fontWeight: 500,
+                                transition: 'all 0.2s ease',
+                              }}
+                              className="analyze-button"
+                            >
+                              Analyze &rarr;
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -874,6 +904,13 @@ function App() {
           </div>
         )}
       </Popup>
+
+      {/* Add the DetailsPopup component */}
+            <DetailsPopup
+        isOpen={isDetailsPopupOpen}
+        onClose={() => setIsDetailsPopupOpen(false)}
+        vulnerability={selectedVulnerability}
+      />
     </div>
   );
 }

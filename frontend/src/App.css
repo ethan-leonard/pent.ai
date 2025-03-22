@@ -12,3 +12,8 @@ button.analyze-button:hover {
 .analyze-button:hover {
 background-color: rgba(0, 119, 204, 0.1);
 }
+
+button.details-button:hover {
+    background-color: rgba(0, 119, 204, 0.1);
+    box-shadow: 0 0 10px rgba(0, 119, 204, 0.3);
+  }
