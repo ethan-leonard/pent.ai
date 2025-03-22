@@ -42,7 +42,6 @@ pent.ai/
 │   │   ├── api/           # REST API implementation
 │   │   ├── vulnerability_scanner/ # ZAP integration
 │   │   ├── simulate/      # Simulation capabilities
-│   │   ├── validation/    # Validation utilities
 │   │   ├── pentai/        # Django settings & config
 │   │   └── proxy-lite-docker/ # Dockerfile for proxy-lite
 │   └── requirements.txt   # Python dependencies

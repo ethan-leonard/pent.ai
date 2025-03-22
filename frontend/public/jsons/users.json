@@ -1,0 +1,78 @@
+{
+    "users": [
+    [
+        {
+            "role": "accounting",
+            "email": "accountant@juice-sh.op",
+            "password": "963e10f92a70b4b463220cb4c5d636dc"
+        },
+        {
+            "role": "admin",
+            "email": "J12934@juice-sh.op",
+            "password": "3c2abc04e4a6ea8f1327d0aae3714b7d"
+        },
+        {
+            "role": "admin",
+            "email": "bjoern@juice-sh.op",
+            "password": "7f311911af16fa8f418dd1a3051d6810"
+        },
+        {
+            "role": "admin",
+            "email": "support@juice-sh.op",
+            "password": "3869433d74e3d0c86fd25562f836bc82"
+        },
+        {
+            "role": "admin",
+            "email": "testing@juice-sh.op",
+            "password": "b616a64605a07941fbd31868aea3b54b"
+        },
+        {
+            "role": "customer",
+            "email": "64160173@go.buu.ac.th",
+            "password": "c47f6c02988d27170e1f3ad4c5fd914a"
+        },
+        {
+            "role": "customer",
+            "email": "64160284@go.buu.ac.th",
+            "password": "625e6fbeb231d82d3f6b1d893133e001"
+        },
+        {
+            "role": "customer",
+            "email": "UBPUWRAL@gmail.com",
+            "password": "075764f1dbe9f6be7bdd7eef78b26f28"
+        },
+        {
+            "role": "customer",
+            "email": "a@gmail.com",
+            "password": "5b56b48722874212cc6f51805bb8464e"
+        },
+        {
+            "role": "customer",
+            "email": "ab1@gmail.com",
+            "password": "e67c10a4c8fbfc0c400e047bb9a056a1"
+        },
+        {
+            "role": "deluxe",
+            "email": "bjoern@owasp.org",
+            "password": "0f16f83f885e58ed957bcf365913e17d"
+        },
+        {
+            "role": "deluxe",
+            "email": "ciso@juice-sh.op",
+            "password": "861917d5fa5f1172f931dc700d81a8fb"
+        },
+        {
+            "role": "deluxe",
+            "email": "stan@juice-sh.op",
+            "password": "e9048a3f43dd5e094ef733f3bd88ea64"
+        },
+        {
+            "role": "deluxe",
+            "email": "ethereum@juice-sh.op",
+            "password": "2c17c6393771ee3048ae34d6b380c5ec"
+        }
+        ]
+          
+    ]
+  }
+  

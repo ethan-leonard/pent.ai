@@ -88,6 +88,23 @@ function App() {
   // For animations
   const [pageLoaded, setPageLoaded] = useState(false);
 
+  // State for simulation end
+  const [simulationEnded, setSimulationEnded] = useState(false);
+
+  const handleSimulationEnd = () => {
+    setSimulationEnded(true);
+  };
+
+  const handleDownloadUsersJson = () => {
+    // Create a link to download the file
+    const link = document.createElement('a');
+    link.href = '/jsons/users.json';
+    link.download = 'users.json';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // Inject keyframes when component mounts
   useEffect(() => {
     const styleElement = document.createElement('style');
@@ -894,13 +911,59 @@ function App() {
       {/* Add the Popup component */}
       <Popup
         isOpen={isPopupOpen}
-        onClose={() => setIsPopupOpen(false)}
+        onClose={() => {
+          setIsPopupOpen(false);
+          setSimulationEnded(false); // Reset the state when closing the popup
+        }}
         title={selectedVulnerability?.name || "Vulnerability"}
         id={selectedVulnerability?.cweid || ""}
+        onVideoEnd={handleSimulationEnd} // Add the video end handler
       >
         {selectedVulnerability && (
           <div>
             {/* The content inside the popup will remain the same */}
+
+            {simulationEnded && (
+              <div style={{
+                marginTop: '20px',
+                padding: '15px',
+                backgroundColor: COLORS.danger,
+                color: COLORS.text,
+                borderRadius: '6px',
+                animation: 'fadeIn 0.5s ease-out',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <span style={{ 
+                    fontSize: '1.2em', 
+                    marginRight: '10px',
+                    animation: 'pulse 2s infinite'
+                  }}>⚠️</span>
+                  <span>User data extracted from vulnerable endpoint</span>
+                </div>
+                <button
+                  onClick={handleDownloadUsersJson}
+                  style={{
+                    backgroundColor: 'rgba(255,255,255,0.2)',
+                    color: COLORS.text,
+                    border: 'none',
+                    borderRadius: '4px',
+                    padding: '8px 12px',
+                    cursor: 'pointer',
+                    fontSize: '13px',
+                    fontWeight: 500,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <span style={{ fontSize: '1.1em' }}>⬇️</span>
+                  Download users.json
+                </button>
+              </div>
+            )}
           </div>
         )}
       </Popup>

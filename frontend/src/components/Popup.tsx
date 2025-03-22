@@ -24,14 +24,16 @@ interface PopupProps {
   title?: string;
   id?: string;
   children?: React.ReactNode;
+  onVideoEnd?: () => void; // New optional prop for video end event
 }
 
-const Popup: React.FC<PopupProps> = ({ isOpen, onClose, title, id, children }) => {
+const Popup: React.FC<PopupProps> = ({ isOpen, onClose, title, id, children, onVideoEnd }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const chatVideoRef = useRef<HTMLVideoElement>(null);
   const flowVideoRef = useRef<HTMLVideoElement>(null);
   const [chatLoaded, setChatLoaded] = useState(false);
   const [flowLoaded, setFlowLoaded] = useState(false);
+  const [videoEnded, setVideoEnded] = useState(false);
   
   // Handle ESC key press
   useEffect(() => {
@@ -50,6 +52,7 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onClose, title, id, children }) =
     if (isOpen) {
       setIsAnimating(true);
       document.body.style.overflow = 'hidden';
+      setVideoEnded(false);
       
       // Auto play the videos when popup opens
       if (chatVideoRef.current) {
@@ -79,6 +82,25 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onClose, title, id, children }) =
       }
     }
   }, [isOpen]);
+  
+  // Function to handle when both videos have ended
+  const handleVideoEnd = () => {
+    setVideoEnded(true);
+    if (onVideoEnd) {
+      onVideoEnd();
+    }
+  };
+  
+  // Function to download the users.json file
+  const handleDownloadUsersJson = () => {
+    // Create a link to download the file
+    const link = document.createElement('a');
+    link.href = '/jsons/users.json';
+    link.download = 'users.json';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
   
   if (!isOpen && !isAnimating) return null;
   
@@ -388,6 +410,7 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onClose, title, id, children }) =
                 playsInline
                 disablePictureInPicture
                 onLoadedData={() => setChatLoaded(true)}
+                onEnded={handleVideoEnd}
                 style={{ 
                   width: '100%',
                   height: '100%',
@@ -691,6 +714,7 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onClose, title, id, children }) =
                   playsInline
                   disablePictureInPicture
                   onLoadedData={() => setFlowLoaded(true)}
+                  onEnded={handleVideoEnd}
                   style={{ 
                     width: '100%',
                     height: 'auto',
@@ -733,6 +757,61 @@ const Popup: React.FC<PopupProps> = ({ isOpen, onClose, title, id, children }) =
             </div>
           </div>
         </div>
+        
+        {/* Alert when video ends showing data extraction */}
+        {videoEnded && (
+          <div style={{
+            position: 'absolute',
+            bottom: '20px',
+            left: '20px',
+            right: '20px',
+            backgroundColor: COLORS.danger,
+            color: COLORS.text,
+            padding: '15px 20px',
+            borderRadius: '8px',
+            boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
+            animation: 'fadeIn 0.5s ease-out',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            zIndex: 1001
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <span style={{ 
+                fontSize: '1.5em', 
+                marginRight: '12px',
+                animation: 'pulse 2s infinite'
+              }}>⚠️</span>
+              <span style={{ fontSize: '1rem', fontWeight: '500' }}>User data extracted from vulnerable endpoint</span>
+            </div>
+            <button
+              onClick={handleDownloadUsersJson}
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.2)',
+                color: COLORS.text,
+                border: 'none',
+                borderRadius: '4px',
+                padding: '8px 16px',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                fontWeight: '500',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.3)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.2)';
+              }}
+            >
+              <span style={{ fontSize: '1.1em' }}>⬇️</span>
+              Download users.json
+            </button>
+          </div>
+        )}
         
         {/* CSS animations */}
         <style>
