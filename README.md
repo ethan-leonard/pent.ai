@@ -33,6 +33,49 @@ Pent.AI follows a modern microservices architecture with these key components:
 - Responsive design for all device sizes
 - Interactive vulnerability analysis tools
 
+## Project Timeline
+
+The development of Pent.AI has followed these key milestones:
+
+### Phase 1: Foundation (Completed)
+1. **Infrastructure Setup**
+   - Created Django and React application structure
+   - Established basic project architecture
+   - Set up development environment
+
+2. **Containerization**
+   - Created Docker containers for OWASP ZAP and Juice Shop
+   - Implemented Docker networking for inter-service communication
+   - Developed startup script for one-command deployment
+
+3. **Core Scanning Integration**
+   - Integrated OWASP ZAP API with Django backend
+   - Implemented multiple scanning modes (traditional, AJAX, active)
+   - Created vulnerability data model and storage
+
+### Phase 2: Enhancement (In Progress)
+4. **AI Integration & Visualization**
+   - Added visual simulation for vulnerability demonstration
+   - Created interactive UI for vulnerability exploration
+   - Implemented initial proxy-lite support for validation
+
+### Phase 3: Advanced Features (Upcoming)
+5. **Proxy-lite Integration**
+   - Properly host local instance of proxy-lite
+   - Connect via API and Docker network to Django application
+   - Implement validation workflow for detected vulnerabilities
+
+6. **Extended AI Capabilities**
+   - Incorporate OpenAI prompting for wider range of vulnerability simulations
+   - Generate custom mitigation strategies based on application context
+   - Develop risk assessment module with AI recommendations
+
+7. **User Experience Improvements**
+   - Implement real-time loading status for active scans
+   - Display vulnerability alerts as they are detected during active scanning
+   - Add interactive dashboard for scan monitoring
+   - Enhance visual reporting capabilities
+   
 ## Project Structure
 
 ```plaintext
@@ -162,16 +205,6 @@ npm start
 - Docker (Containerization)
 - OWASP Juice Shop (Test target)
 - OWASP ZAP (Scanner)
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository  
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)  
-3. Commit your changes (`git commit -m '✨ feat: Add some amazing feature'`)  
-4. Push to the branch (`git push origin feature/amazing-feature`)  
-5. Open a Pull Request  
 
 ## Commit Message Guidelines
 
