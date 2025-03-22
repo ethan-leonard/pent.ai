@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import './App.css';
 import axios from 'axios';
 
+// Import the Popup component
+import Popup from './components/Popup';
+
 interface Vulnerability {
   name: string;
   description: string;
@@ -9,6 +12,11 @@ interface Vulnerability {
   risk: string;
   param?: string;
   attack?: string;
+  solution?: string;
+  evidence?: string;
+  cweid?: string;
+  reference?: string;
+  method?: string;
 }
 
 function App() {
@@ -17,8 +25,13 @@ function App() {
   const [progressMessage, setProgressMessage] = useState<string | null>(null);
   const [resultData, setResultData] = useState<any>(null);
   const [scanType, setScanType] = useState<'combined' | 'traditional' | 'ajax' | 'active'>('combined');
+  
+  // Add state for the popup
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [selectedVulnerability, setSelectedVulnerability] = useState<Vulnerability | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
+    // Your existing handleSubmit code...
     e.preventDefault();
     setIsLoading(true);
     setProgressMessage("Testing ZAP connection...");
@@ -91,10 +104,10 @@ function App() {
     }
   };
 
-  // Function to handle the simulate button click (placeholder for now)
-  const handleSimulate = (vulnerability: any) => {
-    console.log("Simulate clicked for vulnerability:", vulnerability);
-    // Will implement actual functionality later
+  // Updated function to handle the simulate button click
+  const handleSimulate = (vulnerability: Vulnerability) => {
+    setSelectedVulnerability(vulnerability);
+    setIsPopupOpen(true);
   };
 
   // Function to extract just the first two sentences from text
@@ -119,6 +132,7 @@ function App() {
 
   // Function to render risk with appropriate color
   const renderRiskBadge = (risk: string) => {
+    // Your existing renderRiskBadge code...
     let color = '#777'; // Default gray for unknown
     
     switch(risk.toLowerCase()) {
@@ -150,6 +164,7 @@ function App() {
     );
   };
 
+  // Return the JSX for the main component
   return (
     <div className="App" style={{
       maxWidth: '90%',
@@ -157,6 +172,7 @@ function App() {
       padding: '20px',
       fontFamily: 'Arial, sans-serif'
     }}>
+      {/* Your existing header and form JSX... */}
       <header style={{ marginBottom: '30px', textAlign: 'center' }}>
         <h1>Pent.AI</h1>
         <p>Security Scan Tester</p>
@@ -343,6 +359,165 @@ function App() {
           </div>
         )}
       </section>
+
+      {/* Add the Popup component */}
+      <Popup
+        isOpen={isPopupOpen}
+        onClose={() => setIsPopupOpen(false)}
+        title={selectedVulnerability?.name || "Vulnerability"}
+        id={selectedVulnerability?.cweid || ""}
+      >
+        {selectedVulnerability && (
+          <div>
+            <div style={{ marginBottom: '20px' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '10px' }}>
+                Vulnerability Details
+              </h3>
+              <div style={{ display: 'flex', marginBottom: '10px' }}>
+                <div style={{ fontWeight: 'bold', width: '120px' }}>Risk Level:</div>
+                <div>{renderRiskBadge(selectedVulnerability.risk)}</div>
+              </div>
+              <div style={{ marginBottom: '10px' }}>
+                <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>Description:</div>
+                <div style={{ 
+                  backgroundColor: '#f9f9f9', 
+                  padding: '10px', 
+                  borderRadius: '4px',
+                  border: '1px solid #eee'
+                }}>
+                  {selectedVulnerability.description}
+                </div>
+              </div>
+              {selectedVulnerability.solution && (
+                <div style={{ marginBottom: '10px' }}>
+                  <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>Solution:</div>
+                  <div style={{ 
+                    backgroundColor: '#f9f9f9', 
+                    padding: '10px', 
+                    borderRadius: '4px',
+                    border: '1px solid #eee'
+                  }}>
+                    {selectedVulnerability.solution}
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <div style={{ marginBottom: '20px' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '10px' }}>
+                Technical Information
+              </h3>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <tbody>
+                  <tr style={{ borderBottom: '1px solid #eee' }}>
+                    <td style={{ padding: '8px', fontWeight: 'bold', width: '150px' }}>URL:</td>
+                    <td style={{ padding: '8px' }}>
+                      <a href={selectedVulnerability.url} target="_blank" rel="noopener noreferrer">
+                        {selectedVulnerability.url}
+                      </a>
+                    </td>
+                  </tr>
+                  {selectedVulnerability.method && (
+                    <tr style={{ borderBottom: '1px solid #eee' }}>
+                      <td style={{ padding: '8px', fontWeight: 'bold' }}>HTTP Method:</td>
+                      <td style={{ padding: '8px' }}>{selectedVulnerability.method}</td>
+                    </tr>
+                  )}
+                  {selectedVulnerability.param && (
+                    <tr style={{ borderBottom: '1px solid #eee' }}>
+                      <td style={{ padding: '8px', fontWeight: 'bold' }}>Parameter:</td>
+                      <td style={{ padding: '8px' }}>{selectedVulnerability.param}</td>
+                    </tr>
+                  )}
+                  {selectedVulnerability.attack && (
+                    <tr style={{ borderBottom: '1px solid #eee' }}>
+                      <td style={{ padding: '8px', fontWeight: 'bold' }}>Attack:</td>
+                      <td style={{ padding: '8px' }}>
+                        <code style={{ 
+                          backgroundColor: '#f5f5f5', 
+                          padding: '2px 4px', 
+                          borderRadius: '3px',
+                          fontFamily: 'monospace'
+                        }}>
+                          {selectedVulnerability.attack}
+                        </code>
+                      </td>
+                    </tr>
+                  )}
+                  {selectedVulnerability.evidence && (
+                    <tr style={{ borderBottom: '1px solid #eee' }}>
+                      <td style={{ padding: '8px', fontWeight: 'bold' }}>Evidence:</td>
+                      <td style={{ padding: '8px' }}>
+                        <pre style={{ 
+                          margin: 0, 
+                          whiteSpace: 'pre-wrap', 
+                          wordBreak: 'break-all',
+                          backgroundColor: '#f5f5f5',
+                          padding: '8px',
+                          borderRadius: '4px',
+                          fontSize: '13px',
+                          maxHeight: '200px',
+                          overflow: 'auto'
+                        }}>
+                          {selectedVulnerability.evidence}
+                        </pre>
+                      </td>
+                    </tr>
+                  )}
+                  {selectedVulnerability.cweid && (
+                    <tr style={{ borderBottom: '1px solid #eee' }}>
+                      <td style={{ padding: '8px', fontWeight: 'bold' }}>CWE ID:</td>
+                      <td style={{ padding: '8px' }}>
+                        <a 
+                          href={`https://cwe.mitre.org/data/definitions/${selectedVulnerability.cweid}.html`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          CWE-{selectedVulnerability.cweid}
+                        </a>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+            
+            <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => {
+                  // Here you would implement actual simulation functionality
+                  console.log("Simulating vulnerability:", selectedVulnerability);
+                  alert("Simulation feature coming in the next release!");
+                }}
+                style={{
+                  backgroundColor: '#337ab7',
+                  color: 'white',
+                  padding: '10px 15px',
+                  border: 'none',
+                  borderRadius: '4px',
+                  marginRight: '10px',
+                  cursor: 'pointer'
+                }}
+              >
+                Run Simulation
+              </button>
+              <button
+                onClick={() => setIsPopupOpen(false)}
+                style={{
+                  backgroundColor: '#f5f5f5',
+                  color: '#333',
+                  padding: '10px 15px',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+      </Popup>
     </div>
   );
 }
