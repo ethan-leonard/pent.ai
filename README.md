@@ -4,7 +4,7 @@
 
 ## Video Demo & Code Walkthrough
 
-[!Demo Video(https://img.youtube.com/vi/TwAqhPSnis0/maxresdefault.jpg)](https://youtu.be/TwAqhPSnis0)
+[![YouTube Thumbnail](https://img.youtube.com/vi/TwAqhPSnis0/maxresdefault.jpg)](https://youtu.be/TwAqhPSnis0)
 
 ## Overview
 
