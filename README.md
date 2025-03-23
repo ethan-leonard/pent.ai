@@ -76,8 +76,8 @@ flowchart TD
         
         %% Detailed actions
         L --> M[Simulate with proxy.lite]
-        M --> N[Show extracted user data]
-        N --> O[Allow user data download]
+        M --> N[Show extracted results]
+        N --> O[Allow data download]
         
         K --> P[Display vulnerability details]
         P --> Q[Show descriptions, evidence, references]
