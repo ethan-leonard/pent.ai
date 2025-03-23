@@ -2,13 +2,13 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg) ![Python](https://img.shields.io/badge/python-3.9+-green.svg) ![Django](https://img.shields.io/badge/django-5.1+-green.svg) ![React](https://img.shields.io/badge/react-19.0+-61DAFB.svg) ![TypeScript](https://img.shields.io/badge/typescript-4.9+-blue.svg)
 
-## Video Demo & Code Walkthrough
-
-[![YouTube Thumbnail](https://img.youtube.com/vi/TwAqhPSnis0/maxresdefault.jpg)](https://youtu.be/TwAqhPSnis0)
-
 ## Overview
 
 Pent.AI is an advanced web application security platform that automatically identifies, validates, and documents web vulnerabilities. By combining the power of OWASP ZAP's scanning capabilities with proxy-lite validation and AI-driven risk assessment, Pent.AI provides comprehensive security insights for web applications.
+
+## Video Demo & Code Walkthrough
+
+[![YouTube Thumbnail](https://img.youtube.com/vi/TwAqhPSnis0/maxresdefault.jpg)](https://youtu.be/TwAqhPSnis0)
 
 ### Key Features
 
