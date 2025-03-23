@@ -33,6 +33,71 @@ Pent.AI follows a modern microservices architecture with these key components:
 - Responsive design for all device sizes
 - Interactive vulnerability analysis tools
 
+## Flow
+
+```mermaid
+flowchart TD
+    %% Main user flow
+    A[User opens Pent.AI application] --> B[Enter target URL]
+    B --> C{Select scan type}
+    
+    %% Scan options
+    C -->|Combined| D[Run Traditional + Ajax + Active Scan]
+    C -->|Traditional| E[Run Traditional Crawler Scan]
+    C -->|Ajax| F[Run Ajax Crawler Scan]
+    C -->|Active| G[Run Active Analysis Scan]
+    
+    %% Connection types
+    D --> H1[HTTP/API requests to backend]
+    E --> H1
+    F --> H1
+    G --> H1
+    
+    %% Backend processing
+    subgraph Backend ["Django Backend"]
+        H1 --> H2[Connect to OWASP ZAP]
+        H2 --> H3[Process scan results]
+        H3 --> H4[Store vulnerabilities in database]
+        
+        %% Database operations
+        H4 --> DB[(Django Database)]
+        DB --> H5[Retrieve vulnerabilities]
+        H5 --> H6[Return JSON response]
+    end
+    
+    %% Frontend display
+    subgraph Frontend ["React Frontend"]
+        H6 --> I[Display vulnerability list in UI]
+        I --> J{User interaction}
+        
+        %% User actions
+        J -->|View Details| K[Show DetailsPopup]
+        J -->|Run Analysis| L[Show Popup]
+        
+        %% Detailed actions
+        L --> M[Simulate with proxy.lite]
+        M --> N[Show extracted user data]
+        N --> O[Allow user data download]
+        
+        K --> P[Display vulnerability details]
+        P --> Q[Show descriptions, evidence, references]
+        Q --> R[Link to CWE details]
+    end
+    
+    %% Styling
+    classDef frontend fill:#1e1e1e,color:#fff,stroke:#0077cc
+    classDef backend fill:#333333,color:#fff,stroke:#00b3ff
+    classDef database fill:#005999,color:#fff,stroke:#00ccff
+    classDef userAction fill:#0077cc,color:#fff,stroke:#00ccff
+    classDef dataFlow fill:#ff3b30,color:#fff,stroke:#ffbb00
+    
+    class Frontend frontend
+    class Backend backend
+    class DB database
+    class A,B,C userAction
+    class M,N,O dataFlow
+```
+
 ## Project Timeline
 
 The development of Pent.AI has followed these key milestones:
