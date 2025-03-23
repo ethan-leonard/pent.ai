@@ -737,7 +737,6 @@ function App() {
                           borderBottom: `1px solid ${COLORS.mediumGray}`,
                           backgroundColor: index % 2 === 0 ? 'rgba(0,0,0,0.1)' : 'transparent',
                           transition: 'background-color 0.2s ease',
-                          // Removed '&:hover' as it is not supported in inline styles
                         }}
                       >
                         <td style={{ 
