@@ -17,3 +17,7 @@ button.details-button:hover {
     background-color: rgba(0, 119, 204, 0.1);
     box-shadow: 0 0 10px rgba(0, 119, 204, 0.3);
   }
+
+.vulnerability-row:hover {
+  background-color: rgba(0, 119, 204, 0.1) !important;
+}

@@ -731,7 +731,7 @@ function App() {
                   </thead>
                   <tbody>
                     {resultData.alerts.map((vuln: any, index: number) => (
-                      <tr 
+                        <tr className="vulnerability-row"
                         key={index} 
                         style={{ 
                           borderBottom: `1px solid ${COLORS.mediumGray}`,
