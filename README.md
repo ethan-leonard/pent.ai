@@ -145,29 +145,29 @@ The development of Pent.AI has followed these key milestones:
 
 ```plaintext
 pent.ai/
-├── backend/               # Django backend
-│   ├── pentai/            # Main Django project
-│   │   ├── api/           # REST API implementation
+├── backend/                       # Django backend
+│   ├── pentai/                    # Main Django project
+│   │   ├── api/                   # REST API implementation
 │   │   ├── vulnerability_scanner/ # ZAP integration
-│   │   ├── simulate/      # Simulation capabilities
-│   │   ├── pentai/        # Django settings & config
-│   │   └── proxy-lite-docker/ # Dockerfile for proxy-lite
-│   └── requirements.txt   # Python dependencies
+│   │   ├── simulate/              # Simulation capabilities
+│   │   ├── pentai/                # Django settings & config
+│   │   └── proxy-lite-docker/     # Dockerfile for proxy-lite
+│   └── requirements.txt           # Python dependencies
 │
-├── frontend/              # React frontend
-│   ├── public/            # Static assets
-│   │   └── videos/        # Simulation videos
+├── frontend/                      # React frontend
+│   ├── public/                    # Static assets
+│   │   └── videos/                # Simulation videos
 │   ├── src/
-│   │   ├── components/    # UI components
-│   │   │   ├── Popup.tsx  # Simulation popup
-│   │   │   └── DetailsPopup.tsx # Vulnerability details
-│   │   ├── App.tsx        # Main application
-│   │   └── index.tsx      # Entry point
-│   └── package.json       # Node.js dependencies
+│   │   ├── components/            # UI components
+│   │   │   ├── Popup.tsx          # Simulation popup
+│   │   │   └── DetailsPopup.tsx   # Vulnerability details
+│   │   ├── App.tsx                # Main application
+│   │   └── index.tsx              # Entry point
+│   └── package.json               # Node.js dependencies
 │
-├── startup.sh             # One-command startup script
-├── LICENSE                # MIT License file
-└── README.md              # This file
+├── startup.sh                     # One-command startup script
+├── LICENSE                        # MIT License file
+└── README.md                      # This file
 ```
 
 ## Getting Started
